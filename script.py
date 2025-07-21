@@ -8,41 +8,44 @@ WINDOW_TITLE = "Polaris Node Manager"
 ADD_BUTTON_POS = (1437, 139)  # Koordinat tombol 'Add Machine'
 
 # Data awal
-IP_ADDRESS_AWAL = "13.229.95.51"
+IP_ADDRESS_AWAL = "54.151.202.98"
 USERNAME = "ubuntu"
 SSH_KEY = """-----BEGIN RSA PRIVATE KEY-----
-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
+MIIEpAIBAAKCAQEAzDRF/26lOlQYWscpXooi8p+AbXxsOHetvNnACS4ha149CLBv
+5YD53+x3itQFEcOlbXBfF284FbN0u7wHsKjY3wHPXV8KWqdT+wjlCPty4PJaFUpd
+tR9OITm53At6DCKL4qtlBCFm//rQ0HI+wdp0Pyq2c/UJ1s0nDfuhoqb80B/VD+W5
+0RslzPhT3HscsL8PL/DicOWgyLY4EBXC6VnJsyWAk1K/l90ksWY6qD/sCMDEdaxk
+Sid5zHVTtLAA7xyl3JCkkGhxGy3Hb6X7TjoUO4bIrrAPjlYoS0hQRLZHMWLmSGyI
+ZA75JrI0p7XvCWDdyySM7OTcR5NuXWr8OnMcKQIDAQABAoIBABuxmyyhHNdkQElP
+aVTg9wxghVJT5XljAbTy8xBLqUyeYziidQpzC3BK6YtyZZ2bIvxMmRjchIas58/u
+GDzlKURVQoIvOYBB4SnScv1c3J+VPpJUm5DMxhPLeGFXTR4IMWB0TibZQNbGdTtP
+wyMXNVy7tjLTsJnpCLrkvW8Jpo+zA1u/TCuzJAXTQlgnT8h2IisQglo50559QNRF
+HpEaYh/PepcAFJStmiG/nnknLl/zeXwhhW2v8zAykCWvwciPunsvWtSsWHOO/Vk1
+DM3NN3OcL9K+6khWJtbtM/6A/VsJhWGCwEt/Ah7WopN76siq0NMMh8K4MpIk+G3s
+AKDM8uECgYEA8i8B9enbfsZneHktBDczGI4QUwOeJcam5LswPSjRS92J/SzV5oMH
+eP51aWU060U1KGuHlWLp57zBF/hhXA1Lsqfa9RH3W25xMdPugaBumk/zN1kvjt+x
+dNGlsc1/bNf2lTygL7MAogrwaSobhH7slHBdfPbwWKPwLeVWOrDwCQsCgYEA19qX
+f2GfhDQ11cJsDWvIBzAzlkLC0aNUs9XDG5QIvoUkxrpI5k8RnW50YfIAasiPtz2s
+BYlNrMlCZPlfP/KX8qlAOheyYJCkIikgmwISS5TVI67xQ99AB6noWmJVKFjDoodN
+GdYsmCZVr4xkxwnyg/GM6jFnzcSZ9fWIs1fPeBsCgYEArQwBrqFHATLrRB3xmI2I
+qQb5ixeOrRdgsRc/xLOhuT+3FXwv6uG9OSs44fI6+dEdxp/u5UMkNz2cC3CiwI+P
+gzyFK4+G24Hyx9PTHDRyUzjFZMsJPGGB/yK97moTnsZBnykOnIae8So31i0MNIQs
+r3QKmPwpiGy7dU/laVJ8cTkCgYAXbyDhcGzMAosRsPDgKCJoPWBsYMUb01qfx4ZO
+GS012eibNqAxeMYVzGcQNyC6dxm7MBPb6gMnzhXKNpSTsbezXZKee/Ier7VSDBsB
+GSF5WSgmnpiM4NDnxBd4sJJENhbPL1c8hdcDka3dyCUswrS0hGXjCwgU+9InNMfp
+iI/6nwKBgQCo/9HDdpWedJHyuAcoMqTe4R6mnzo5UZqESV3XkrCyMGEN38Y6upR/
+vDfUGeD2QZM1KsPcysz3htd3+4qOV6zto87Y15iLctC+v6MlGcQXTs1AAWYwJ6dO
+E7kdqpJqW+Jh/+/ONYBxoWiqk8YO7lCYT3+d6PUz+Rvn96RYsXP+gQ==
 -----END RSA PRIVATE KEY-----"""
 
 # List nama yang akan di-loop
 ip_list_baru = [
-    "129.212.179.100",
-    "129.212.180.214"
-    ]
+    "129.212.183.45",
+    "129.212.183.191",
+    "129.212.183.227",
+    "129.212.183.192",
+    "129.212.182.67"
+]
 
 
 def focus_window(title):
@@ -106,7 +109,7 @@ def fill_form(ip, username, ssh_key, nama):
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(20)
+    time.sleep(28)
     print("✅ Validate POW")
 
     pyautogui.press('tab')
@@ -142,7 +145,7 @@ def fill_form(ip, username, ssh_key, nama):
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(15)
+    time.sleep(13)
     print("✅Lanjut Check SSH")
 
     pyautogui.press('tab')
@@ -172,6 +175,8 @@ def fill_form(ip, username, ssh_key, nama):
     pyautogui.press('tab')
     pyautogui.press('enter')
     print("✅ Mesin berhasil tambahkan")
+    
+    time.sleep(1)
 
 
 if __name__ == "__main__":
