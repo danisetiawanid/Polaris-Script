@@ -176,7 +176,7 @@ def fill_form(ip, username, ssh_key, nama):
     pyautogui.press('enter')
     print("✅ Mesin berhasil tambahkan")
     
-    time.sleep(1)
+    time.sleep(0.3)
 
 
 if __name__ == "__main__":
