@@ -5,20 +5,17 @@ import pyperclip
 
 # Judul jendela aplikasi
 WINDOW_TITLE = "Polaris Node Manager"
-ADD_BUTTON_POS = (1358, 177)
+# ADD_BUTTON_POS = (1358, 177)
 
 USERNAME = "root"
 PASSWORD = """Azura042AA"""
 
 ip_list_baru = [
-    "129.212.187.46",
-    "129.212.185.133",
-    "134.199.195.172",
-    "129.212.187.44",
-    "134.199.206.68",
-    "129.212.185.221",
-    "134.199.207.2",
-    "134.199.204.62"
+    "134.199.193.173",
+    "129.212.186.149",
+    "129.212.187.65",
+    "129.212.186.155",
+    "129.212.186.150"          
 ]
 
 
@@ -32,15 +29,27 @@ def focus_window(title):
     print(f"✅ Fokus ke jendela: {win.title}")
 
 
-def click_add_machine():
-    pyautogui.moveTo(ADD_BUTTON_POS)
-    time.sleep(0.5)
-    pyautogui.click()
-    print("✅ Klik tombol 'Add Machine'")
+# def click_add_machine():
+#     pyautogui.moveTo(ADD_BUTTON_POS)
+#     time.sleep(0.5)
+#     pyautogui.click()
+#     print("✅ Klik tombol 'Add Machine'")
 
 
 def fill_form(ip, username, password, nama_mesin):
-    time.sleep(1.2)
+    time.sleep(0.4)
+
+    button_image = 'add_button.png'  # Nama file screenshot tombol
+
+    # Cari tombol berdasarkan gambar
+    location = pyautogui.locateOnScreen(button_image, confidence=0.8)
+
+    if location:
+        center = pyautogui.center(location)
+        pyautogui.click(center)
+        print("Button clicked!")
+    else:
+        print("Button not found!")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
@@ -76,13 +85,13 @@ def fill_form(ip, username, password, nama_mesin):
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(7)
+    time.sleep(6)
     print("✅ Validate Network")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(11)
+    time.sleep(13)
     print("✅ Validate POW")
 
     pyautogui.press('tab')
@@ -116,5 +125,5 @@ if __name__ == "__main__":
     focus_window(WINDOW_TITLE)
     for i, ip in enumerate(ip_list_baru, start=1):
         nama_mesin = f"boro-{i}"
-        click_add_machine()
+        # click_add_machine()
         fill_form(ip, USERNAME, PASSWORD, nama_mesin)
