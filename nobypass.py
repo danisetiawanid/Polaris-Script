@@ -11,9 +11,14 @@ USERNAME = "root"
 PASSWORD = """Azura042AA"""
 
 ip_list_baru = [
-    "134.199.192.13",
-    "129.212.186.210",
-    "129.212.186.190"
+    "129.212.187.46",
+    "129.212.185.133",
+    "134.199.195.172",
+    "129.212.187.44",
+    "134.199.206.68",
+    "129.212.185.221",
+    "134.199.207.2",
+    "134.199.204.62"
 ]
 
 
@@ -71,13 +76,13 @@ def fill_form(ip, username, password, nama_mesin):
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(10)
+    time.sleep(7)
     print("✅ Validate Network")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(10)
+    time.sleep(11)
     print("✅ Validate POW")
 
     pyautogui.press('tab')
@@ -98,13 +103,13 @@ def fill_form(ip, username, password, nama_mesin):
     pyautogui.press('enter')
     print(f"✅ Naming mesin '{nama_mesin}' berhasil")
 
-    time.sleep(5)
+    time.sleep(4)
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
     print("✅ Mesin berhasil ditambahkan")
 
-    time.sleep(0.3)
+    time.sleep(0.6)
 
 
 if __name__ == "__main__":
