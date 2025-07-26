@@ -5,17 +5,17 @@ import pyperclip
 
 # Judul jendela aplikasi
 WINDOW_TITLE = "Polaris Node Manager"
-# ADD_BUTTON_POS = (1358, 177)
 
 USERNAME = "root"
 PASSWORD = """Azura042AA"""
 
 ip_list_baru = [
-    "134.199.193.173",
-    "129.212.186.149",
-    "129.212.187.65",
-    "129.212.186.155",
-    "129.212.186.150"          
+    "129.212.179.11",
+    "134.199.201.255",
+    "129.212.178.42",
+    "129.212.176.218",
+    "134.199.204.250",
+    "129.212.178.43"
 ]
 
 
@@ -29,20 +29,13 @@ def focus_window(title):
     print(f"✅ Fokus ke jendela: {win.title}")
 
 
-# def click_add_machine():
-#     pyautogui.moveTo(ADD_BUTTON_POS)
-#     time.sleep(0.5)
-#     pyautogui.click()
-#     print("✅ Klik tombol 'Add Machine'")
-
-
 def fill_form(ip, username, password, nama_mesin):
     time.sleep(0.4)
 
     button_image = 'add_button.png'  # Nama file screenshot tombol
 
     # Cari tombol berdasarkan gambar
-    location = pyautogui.locateOnScreen(button_image, confidence=0.8)
+    location = pyautogui.locateOnScreen(button_image, confidence=0.6)
 
     if location:
         center = pyautogui.center(location)
@@ -78,20 +71,20 @@ def fill_form(ip, username, password, nama_mesin):
     pyautogui.press('enter')
     print("✅ Submit / OK ditekan")
 
-    time.sleep(10)
+    time.sleep(14)
     pyautogui.press('enter')
     print("✅ Submit SSH Ditekan")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(6)
+    time.sleep(17)
     print("✅ Validate Network")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(13)
+    time.sleep(25)
     print("✅ Validate POW")
 
     pyautogui.press('tab')
@@ -112,7 +105,7 @@ def fill_form(ip, username, password, nama_mesin):
     pyautogui.press('enter')
     print(f"✅ Naming mesin '{nama_mesin}' berhasil")
 
-    time.sleep(4)
+    time.sleep(15)
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')

@@ -87,20 +87,20 @@ def fill_form(ip, username, password, nama_mesin):
     pyautogui.press('enter')
     print("? Submit / OK ditekan")
 
-    time.sleep(10)
+    time.sleep(15)
     pyautogui.press('enter')
     print("? Submit SSH Ditekan")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(6)
+    time.sleep(17)
     print("? Validate Network")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(17)
+    time.sleep(25)
     print("? Validate POW")
 
     pyautogui.press('tab')
@@ -122,7 +122,7 @@ def fill_form(ip, username, password, nama_mesin):
     pyautogui.press('enter')
     print(f"? Naming mesin '{nama_mesin}' berhasil")
 
-    time.sleep(7)
+    time.sleep(15)
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
