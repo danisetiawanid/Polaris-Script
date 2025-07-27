@@ -1,11 +1,10 @@
-import pygetwindow as gw
+import subprocess
 import pyautogui
 import time
 import pyperclip
 
 # Judul jendela aplikasi
 WINDOW_TITLE = "Polaris Node Manager"
-ADD_BUTTON_POS = (1437, 139)  # Koordinat tombol 'Add Machine'
 
 # Data awal
 IP_ADDRESS_AWAL = "162.243.70.165"
@@ -51,46 +50,56 @@ pbQwtqq2qcN8cO6QAAAAxkYW5pQERBTkktUEMBAgMEBQ==
 
 # List nama yang akan di-loop
 ip_list_baru = [
-    "104.248.2.254",
-    "165.227.123.227",
-    "138.197.33.60",
-    "68.183.62.186",
-    "159.203.127.187",
-    "167.172.247.136",
-    "165.227.106.82",
-    "174.138.53.120"
+    "164.92.101.20",
+    "159.223.204.37",
+    "128.199.9.124",
+    "143.198.66.228",
 ]
 
 
 def focus_window(title):
-    windows = gw.getWindowsWithTitle(title)
-    if not windows:
+    try:
+        result = subprocess.check_output(["xdotool", "search", "--name", title])
+        window_ids = result.decode().strip().split("\n")
+        if not window_ids:
+            raise Exception("Window tidak ditemukan")
+
+        # Fokus ke window pertama yang cocok
+        subprocess.run(["xdotool", "windowactivate", "--sync", window_ids[0]])
+        time.sleep(1)
+        print(f"? Fokus ke jendela: {title}")
+
+    except subprocess.CalledProcessError:
         raise Exception(f"Tidak ditemukan window dengan judul mengandung '{title}'")
-    win = windows[0]
-    win.activate()
-    time.sleep(1)
-    print(f"✅ Fokus ke jendela: {win.title}")
 
-
-def click_add_machine():
-    pyautogui.moveTo(ADD_BUTTON_POS)
-    time.sleep(0.5)
-    pyautogui.click()
-    print("✅ Klik tombol 'Add Machine'")
 
 
 def fill_form(ip, username, ssh_key, nama):  
     time.sleep(0.4)
 
+    button_image = 'add_button.png'  # Nama file screenshot tombol
+
+    # Cari tombol berdasarkan gambar
+    location = pyautogui.locateOnScreen(button_image, confidence=0.6)
+
+    if location:
+        center = pyautogui.center(location)
+        pyautogui.click(center)
+        print("Button clicked!")
+    else:
+        print("Button not found!")
+
     pyautogui.press('tab')
     pyautogui.press('tab')
-    pyautogui.write(ip)
+    pyperclip.copy(ip)
+    pyautogui.hotkey('ctrl', 'v')
     print("✅ IP Address dimasukkan")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('tab')
-    pyautogui.write(username)
+    pyperclip.copy(username)
+    pyautogui.hotkey('ctrl', 'v')
     print("✅ Username dimasukkan")
 
     pyautogui.press('tab')
@@ -138,21 +147,24 @@ def fill_form(ip, username, ssh_key, nama):
     # Tulis IP BARU
     pyautogui.press('tab')
     pyautogui.press('tab')
-    pyautogui.write(nama)
+    pyperclip.copy(nama)
+    pyautogui.hotkey('ctrl', 'v')
     print(f"✅ Nama node ditulis: {nama}")
 
     # Tab 3x, lalu tulis root
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('tab')
-    pyautogui.write('root')
+    pyperclip.copy('root')
+    pyautogui.hotkey('ctrl', 'v')
     print("✅ Hewan ditulis: root")
 
     # Lanjut isi password
     pyautogui.press('tab')
     pyautogui.press('up')  # Pilih password method
     pyautogui.press('tab')
-    pyautogui.write('Azura042AA')
+    pyperclip.copy('Azura042AA')
+    pyautogui.hotkey('ctrl', 'v')
     print("✅Passwoord ditulis: Azura042AA")
     
     pyautogui.press('tab')
@@ -175,7 +187,8 @@ def fill_form(ip, username, ssh_key, nama):
 
     pyautogui.press('tab')
     pyautogui.press('tab')
-    pyautogui.write('boromachine')
+    pyperclip.copy('machine')
+    pyautogui.hotkey('ctrl', 'v')
     pyautogui.press('tab')
     pyautogui.press('space')
     pyautogui.press('tab')
@@ -197,5 +210,4 @@ if __name__ == "__main__":
     focus_window(WINDOW_TITLE)
     for i, nama in enumerate(ip_list_baru):
         ip = IP_ADDRESS_AWAL  # Ganti jika pakai IP berbeda per nama
-        click_add_machine()
         fill_form(ip, USERNAME, SSH_KEY, nama)

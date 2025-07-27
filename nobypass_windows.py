@@ -32,7 +32,7 @@ def focus_window(title):
 def fill_form(ip, username, password, nama_mesin):
     time.sleep(0.4)
 
-    button_image = 'add_button.png'  # Nama file screenshot tombol
+    button_image = 'add_button.JPG'  # Nama file screenshot tombol
 
     # Cari tombol berdasarkan gambar
     location = pyautogui.locateOnScreen(button_image, confidence=0.6)
