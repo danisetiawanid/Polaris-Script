@@ -8,43 +8,57 @@ WINDOW_TITLE = "Polaris Node Manager"
 ADD_BUTTON_POS = (1437, 139)  # Koordinat tombol 'Add Machine'
 
 # Data awal
-IP_ADDRESS_AWAL = "54.151.202.98"
-USERNAME = "ubuntu"
-SSH_KEY = """-----BEGIN RSA PRIVATE KEY-----
-MIIEpAIBAAKCAQEAzDRF/26lOlQYWscpXooi8p+AbXxsOHetvNnACS4ha149CLBv
-5YD53+x3itQFEcOlbXBfF284FbN0u7wHsKjY3wHPXV8KWqdT+wjlCPty4PJaFUpd
-tR9OITm53At6DCKL4qtlBCFm//rQ0HI+wdp0Pyq2c/UJ1s0nDfuhoqb80B/VD+W5
-0RslzPhT3HscsL8PL/DicOWgyLY4EBXC6VnJsyWAk1K/l90ksWY6qD/sCMDEdaxk
-Sid5zHVTtLAA7xyl3JCkkGhxGy3Hb6X7TjoUO4bIrrAPjlYoS0hQRLZHMWLmSGyI
-ZA75JrI0p7XvCWDdyySM7OTcR5NuXWr8OnMcKQIDAQABAoIBABuxmyyhHNdkQElP
-aVTg9wxghVJT5XljAbTy8xBLqUyeYziidQpzC3BK6YtyZZ2bIvxMmRjchIas58/u
-GDzlKURVQoIvOYBB4SnScv1c3J+VPpJUm5DMxhPLeGFXTR4IMWB0TibZQNbGdTtP
-wyMXNVy7tjLTsJnpCLrkvW8Jpo+zA1u/TCuzJAXTQlgnT8h2IisQglo50559QNRF
-HpEaYh/PepcAFJStmiG/nnknLl/zeXwhhW2v8zAykCWvwciPunsvWtSsWHOO/Vk1
-DM3NN3OcL9K+6khWJtbtM/6A/VsJhWGCwEt/Ah7WopN76siq0NMMh8K4MpIk+G3s
-AKDM8uECgYEA8i8B9enbfsZneHktBDczGI4QUwOeJcam5LswPSjRS92J/SzV5oMH
-eP51aWU060U1KGuHlWLp57zBF/hhXA1Lsqfa9RH3W25xMdPugaBumk/zN1kvjt+x
-dNGlsc1/bNf2lTygL7MAogrwaSobhH7slHBdfPbwWKPwLeVWOrDwCQsCgYEA19qX
-f2GfhDQ11cJsDWvIBzAzlkLC0aNUs9XDG5QIvoUkxrpI5k8RnW50YfIAasiPtz2s
-BYlNrMlCZPlfP/KX8qlAOheyYJCkIikgmwISS5TVI67xQ99AB6noWmJVKFjDoodN
-GdYsmCZVr4xkxwnyg/GM6jFnzcSZ9fWIs1fPeBsCgYEArQwBrqFHATLrRB3xmI2I
-qQb5ixeOrRdgsRc/xLOhuT+3FXwv6uG9OSs44fI6+dEdxp/u5UMkNz2cC3CiwI+P
-gzyFK4+G24Hyx9PTHDRyUzjFZMsJPGGB/yK97moTnsZBnykOnIae8So31i0MNIQs
-r3QKmPwpiGy7dU/laVJ8cTkCgYAXbyDhcGzMAosRsPDgKCJoPWBsYMUb01qfx4ZO
-GS012eibNqAxeMYVzGcQNyC6dxm7MBPb6gMnzhXKNpSTsbezXZKee/Ier7VSDBsB
-GSF5WSgmnpiM4NDnxBd4sJJENhbPL1c8hdcDka3dyCUswrS0hGXjCwgU+9InNMfp
-iI/6nwKBgQCo/9HDdpWedJHyuAcoMqTe4R6mnzo5UZqESV3XkrCyMGEN38Y6upR/
-vDfUGeD2QZM1KsPcysz3htd3+4qOV6zto87Y15iLctC+v6MlGcQXTs1AAWYwJ6dO
-E7kdqpJqW+Jh/+/ONYBxoWiqk8YO7lCYT3+d6PUz+Rvn96RYsXP+gQ==
------END RSA PRIVATE KEY-----"""
+IP_ADDRESS_AWAL = "162.243.70.165"
+USERNAME = "root"
+SSH_KEY = """-----BEGIN OPENSSH PRIVATE KEY-----
+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
+-----END OPENSSH PRIVATE KEY-----"""
 
 # List nama yang akan di-loop
 ip_list_baru = [
-    "129.212.183.45",
-    "129.212.183.191",
-    "129.212.183.227",
-    "129.212.183.192",
-    "129.212.182.67"
+    "104.248.2.254",
+    "165.227.123.227",
+    "138.197.33.60",
+    "68.183.62.186",
+    "159.203.127.187",
+    "167.172.247.136",
+    "165.227.106.82",
+    "174.138.53.120"
 ]
 
 
@@ -66,7 +80,7 @@ def click_add_machine():
 
 
 def fill_form(ip, username, ssh_key, nama):  
-    time.sleep(1.2)
+    time.sleep(0.4)
 
     pyautogui.press('tab')
     pyautogui.press('tab')
@@ -96,20 +110,20 @@ def fill_form(ip, username, ssh_key, nama):
     pyautogui.press('enter')
     print("✅ Submit / OK ditekan")
 
-    time.sleep(20)
+    time.sleep(10)
     pyautogui.press('enter')
     print("✅ Submit SSH Ditekan")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(15)
+    time.sleep(10)
     print("✅ Validate Network")
 
     pyautogui.press('tab')
     pyautogui.press('tab')
     pyautogui.press('enter')
-    time.sleep(28)
+    time.sleep(15)
     print("✅ Validate POW")
 
     pyautogui.press('tab')
@@ -161,7 +175,7 @@ def fill_form(ip, username, ssh_key, nama):
 
     pyautogui.press('tab')
     pyautogui.press('tab')
-    pyautogui.write('chuyamachine')
+    pyautogui.write('boromachine')
     pyautogui.press('tab')
     pyautogui.press('space')
     pyautogui.press('tab')
