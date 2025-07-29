@@ -5,8 +5,21 @@ import threading
 USERNAME = "root"
 PASSWORD = "Azura042AA"  # Ganti sesuai password VPS
 COMMAND = "apt install -y docker.io"
-SERVER_FILE = "servers.txt"
 MAX_THREADS = 10
+
+# Ganti ini dengan daftar IP kamu
+SERVER_LIST = [
+    "164.92.104.24",
+    "159.223.196.223",
+    "143.198.67.108",
+    "143.198.140.58",
+    "146.190.157.159",
+    "146.190.132.29",
+    "146.190.140.135",
+    "146.190.151.75",
+    "24.199.97.85",
+    "164.92.74.46"
+]
 
 print_lock = threading.Lock()  # Untuk mencegah print tumpang tindih
 
@@ -38,11 +51,8 @@ def install_docker(ip):
             print(f"[{ip}] ❌ FAILED: {str(e)}")
 
 def main():
-    with open(SERVER_FILE, 'r') as f:
-        ips = [line.strip() for line in f if line.strip()]
-
     threads = []
-    for ip in ips:
+    for ip in SERVER_LIST:
         t = threading.Thread(target=install_docker, args=(ip,))
         threads.append(t)
         t.start()
