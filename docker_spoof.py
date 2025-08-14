@@ -6,87 +6,106 @@ USERNAME = "root"
 PASSWORD = "Azura042AA"
 
 COMMANDS = [
-    ("Install Docker dan GCC", "apt update && apt install -y docker.io gcc make"),
-    ("Buat file spoof RAM 128 GB", """cat << 'EOF' > ~/ramspoof.c
-#define _GNU_SOURCE
-#include <sys/sysinfo.h>
-#include <unistd.h>
-#include <dlfcn.h>
-long fake_totalram = 128L * 1024 * 1024 * 1024;
-int sysinfo(struct sysinfo *info) {
-    int (*original_sysinfo)(struct sysinfo *);
-    original_sysinfo = dlsym(RTLD_NEXT, "sysinfo");
-    int result = original_sysinfo(info);
-    if (result == 0) {
-        info->totalram = fake_totalram;
-        info->freeram = fake_totalram - (1024 * 1024 * 512);
-        info->bufferram = 1024 * 1024 * 128;
-    }
-    return result;
-}
-long sysconf(int name) {
-    if (name == _SC_PHYS_PAGES) {
-        return fake_totalram / getpagesize();
-    }
-    if (name == _SC_AVPHYS_PAGES) {
-        return (fake_totalram - (1024 * 1024 * 512)) / getpagesize();
-    }
-    long (*original_sysconf)(int);
-    original_sysconf = dlsym(RTLD_NEXT, "sysconf");
-    return original_sysconf(name);
-}
-EOF"""),
-    ("Compile libfake128.so", "gcc -shared -fPIC -o /usr/local/lib/libfake128.so ~/ramspoof.c -ldl"),
-    ("Pasang spoof ke bashrc", "echo 'export LD_PRELOAD=/usr/local/lib/libfake128.so' >> ~/.bashrc"),
-    ("Pasang spoof ke profile", "echo 'export LD_PRELOAD=/usr/local/lib/libfake128.so' >> ~/.profile"),
-    ("Cek hasil spoof RAM", "LD_PRELOAD=/usr/local/lib/libfake128.so free -h")
-]
+    "echo '[STEP 1] Install Docker...'",
+    "apt install -y docker.io",
 
-SERVER_LIST = [
-    "YOUR.VPS.IP.ADDRESS"  # Ganti dengan IP VPS kamu
+    "echo '[STEP 2] Membuat file spoof RAM...'",
+    "cat <<EOF > /tmp/meminfo_fake\n"
+    "MemTotal:       67108864 kB\n"
+    "MemFree:        66000000 kB\n"
+    "MemAvailable:   66000000 kB\n"
+    "Buffers:               0 kB\n"
+    "Cached:                0 kB\n"
+    "SwapCached:            0 kB\n"
+    "SwapTotal:      8388608 kB\n"
+    "SwapFree:       8388608 kB\n"
+    "EOF",
+
+    "echo '[STEP 3] Membuat script /root/ramspoof.sh...'",
+    "cat <<EOF > /root/ramspoof.sh\n"
+    "#!/bin/bash\n"
+    "mount --bind /tmp/meminfo_fake /proc/meminfo\n"
+    "EOF",
+    "chmod +x /root/ramspoof.sh",
+
+    "echo '[STEP 4] Membuat systemd service...'",
+    "cat <<EOF > /etc/systemd/system/ramspoof.service\n"
+    "[Unit]\n"
+    "Description=Spoof RAM via /proc/meminfo\n"
+    "DefaultDependencies=no\n"
+    "Before=sysinit.target\n"
+    "After=local-fs.target\n\n"
+    "[Service]\n"
+    "Type=oneshot\n"
+    "ExecStart=/bin/bash /root/ramspoof.sh\n"
+    "RemainAfterExit=yes\n\n"
+    "[Install]\n"
+    "WantedBy=sysinit.target\n"
+    "EOF",
+
+    "echo '[STEP 5] Enable dan Start Service...'",
+    "systemctl daemon-reexec",
+    "systemctl daemon-reload",
+    "systemctl enable ramspoof",
+    "systemctl start ramspoof",
+
+    "echo '[STEP 6] Cek Hasil RAM Spoof...'",
+    "head -n 3 /proc/meminfo",
+    "free -h"
 ]
 
 MAX_THREADS = 10
+
+# Ganti dengan IP VPS kamu
+SERVER_LIST = [
+    "157.230.130.25"
+]
+
 print_lock = threading.Lock()
 
 def run_commands(ip):
     try:
         with print_lock:
-            print(f"\n[{ip}] 🔌 Connecting...")
+            print(f"[{ip}] 🔌 Connecting...")
 
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ip, username=USERNAME, password=PASSWORD, timeout=10)
 
-        for idx, (desc, cmd) in enumerate(COMMANDS, start=1):
-            with print_lock:
-                print(f"\n[{ip}] ▶️ STEP {idx}: {desc}")
-                print(f"[{ip}] 💻 Command: {cmd.splitlines()[0]}{' ...' if len(cmd.splitlines()) > 1 else ''}")
-
+        for cmd in COMMANDS:
             stdin, stdout, stderr = ssh.exec_command(cmd)
             output = stdout.read().decode()
             error = stderr.read().decode()
 
             with print_lock:
+                print(f"[{ip}] 💻 Command: {cmd}")
                 if output.strip():
-                    print(f"[{ip}] 📤 Output:\n{output.strip()}")
+                    print(f"[{ip}] 📥 Output:\n{output.strip()}")
                 if error.strip():
-                    print(f"[{ip}] ⚠️ Error:\n{error.strip()}")
+                    print(f"[{ip}] ❗ Error:\n{error.strip()}")
 
         ssh.close()
         with print_lock:
-            print(f"\n[{ip}] ✅ ALL STEPS DONE.")
+            print(f"[{ip}] ✅ Semua perintah selesai")
 
     except Exception as e:
         with print_lock:
-            print(f"\n[{ip}] ❌ ERROR: {e}")
+            print(f"[{ip}] ❌ ERROR: {str(e)}")
 
-# Multi-threaded deploy
-threads = []
-for ip in SERVER_LIST:
-    t = threading.Thread(target=run_commands, args=(ip,))
-    t.start()
-    threads.append(t)
+def main():
+    threads = []
+    for ip in SERVER_LIST:
+        t = threading.Thread(target=run_commands, args=(ip,))
+        threads.append(t)
+        t.start()
 
-for t in threads:
-    t.join()
+        while threading.active_count() > MAX_THREADS:
+            pass
+
+    for t in threads:
+        t.join()
+
+    print("\n🎉 SEMUA VPS SUDAH SELESAI!")
+
+if __name__ == "__main__":
+    main()
