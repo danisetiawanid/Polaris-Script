@@ -6,10 +6,10 @@ USERNAME = "root"
 PASSWORD = "Azura042AA"
 
 COMMANDS = [
-    # 1. Install gcc
-    "apt update && apt install -y gcc make",
+    # 0. Install Docker dan gcc
+    "apt update && apt install -y docker.io gcc make",
 
-    # 2. Buat file spoof RAM 128 GB
+    # 1. Buat file spoof RAM 128 GB
     "cat << 'EOF' > ~/ramspoof.c\n"
     "#define _GNU_SOURCE\n"
     "#include <sys/sysinfo.h>\n"
@@ -40,23 +40,23 @@ COMMANDS = [
     "}\n"
     "EOF",
 
-    # 3. Compile jadi libfake128.so
+    # 2. Compile jadi .so
     "gcc -shared -fPIC -o /usr/local/lib/libfake128.so ~/ramspoof.c -ldl",
 
-    # 4. Pasang agar spoof aktif otomatis di setiap shell
+    # 3. Pasang agar spoof aktif otomatis setiap shell
     "echo 'export LD_PRELOAD=/usr/local/lib/libfake128.so' >> ~/.bashrc",
     "echo 'export LD_PRELOAD=/usr/local/lib/libfake128.so' >> ~/.profile",
 
-    # 5. Uji coba output RAM
+    # 4. Test RAM output
     "LD_PRELOAD=/usr/local/lib/libfake128.so free -h"
 ]
 
-# Maksimum koneksi paralel
+# Maksimum jumlah koneksi paralel
 MAX_THREADS = 10
 
 # Daftar IP VPS target
 SERVER_LIST = [
-    "YOUR.VPS.IP.ADDRESS"  # ganti ini
+    "YOUR.VPS.IP.ADDRESS"  # ganti dengan IP kamu
 ]
 
 print_lock = threading.Lock()
