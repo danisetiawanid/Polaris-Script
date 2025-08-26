@@ -1,0 +1,115 @@
+#!/bin/bash
+set -e
+
+echo "[1/6] Install build tools..."
+apt update -y && apt install -y build-essential
+
+mkdir -p /usr/local/src /usr/local/bin
+
+echo "[2/6] Buat libfakecpu.c..."
+cat <<'EOF' > /usr/local/src/libfakecpu.c
+#define _GNU_SOURCE
+#include <dlfcn.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/sysinfo.h>
+#include <stdarg.h>
+#include <sched.h>
+
+static long (*real_sysconf)(int) = NULL;
+static int (*real_get_nprocs)(void) = NULL;
+static int (*real_sched_getaffinity)(pid_t, size_t, cpu_set_t*) = NULL;
+
+long sysconf(int name) {
+    if (!real_sysconf) real_sysconf = dlsym(RTLD_NEXT, "sysconf");
+    if (name == _SC_NPROCESSORS_ONLN || name == _SC_NPROCESSORS_CONF)
+        return 128;
+    return real_sysconf(name);
+}
+
+int get_nprocs(void) {
+    if (!real_get_nprocs) real_get_nprocs = dlsym(RTLD_NEXT, "get_nprocs");
+    return 128;
+}
+
+int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask) {
+    if (!real_sched_getaffinity)
+        real_sched_getaffinity = dlsym(RTLD_NEXT, "sched_getaffinity");
+    int ret = real_sched_getaffinity(pid, cpusetsize, mask);
+    if (mask && cpusetsize >= sizeof(cpu_set_t)) {
+        CPU_ZERO(mask);
+        for (int i = 0; i < 128; i++) CPU_SET(i, mask);
+    }
+    return 0;
+}
+EOF
+
+echo "[3/6] Compile libfakecpu.so..."
+gcc -shared -fPIC -o /usr/local/lib/libfakecpu.so /usr/local/src/libfakecpu.c -ldl
+
+if ! grep -q "/usr/local/lib/libfakecpu.so" /etc/ld.so.preload 2>/dev/null; then
+  echo "/usr/local/lib/libfakecpu.so" >> /etc/ld.so.preload
+fi
+
+echo "[4/6] Buat fake /proc/cpuinfo dan /proc/meminfo..."
+rm -f /usr/local/fakecpuinfo /usr/local/fakememinfo
+for i in $(seq 0 127); do
+cat <<LINE >> /usr/local/fakecpuinfo
+processor   : $i
+vendor_id   : GenuineIntel
+model name  : Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
+cpu MHz     : 2300.000
+cache size  : 40960 KB
+LINE
+done
+
+cat <<EOF > /usr/local/fakememinfo
+MemTotal:       134217728 kB
+MemFree:        120000000 kB
+MemAvailable:   120000000 kB
+Buffers:          500000 kB
+Cached:          2000000 kB
+SwapCached:            0 kB
+EOF
+
+echo "[5/6] Buat fake binary wrapper..."
+
+# lscpu
+cat <<'EOF' > /usr/local/bin/lscpu
+#!/bin/bash
+echo "Architecture:          x86_64"
+echo "CPU(s):                128"
+echo "Thread(s) per core:    1"
+echo "Core(s) per socket:    128"
+echo "Model name:            Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz"
+EOF
+
+# free
+cat <<'EOF' > /usr/local/bin/free
+#!/bin/bash
+echo "              total        used        free      shared  buff/cache   available"
+echo "Mem:      134217728   14200000   120000000     1000000     2000000   120000000"
+EOF
+
+# lsblk
+cat <<'EOF' > /usr/local/bin/lsblk
+#!/bin/bash
+echo "NAME   SIZE TYPE ROTA"
+echo "sda 2147483648K disk 0"
+EOF
+
+# lspci
+cat <<'EOF' > /usr/local/bin/lspci
+#!/bin/bash
+echo "00:02.0 3D controller: NVIDIA Corporation H100 Tensor Core GPU (rev a1)"
+EOF
+
+chmod +x /usr/local/bin/{lscpu,free,lsblk,lspci}
+
+echo "[6/6] Spoofing lengkap terpasang! Silakan reboot VPS."
+echo "Tes setelah reboot:"
+echo "  lscpu | grep CPU"
+echo "  free -h"
+echo "  lsblk"
+echo "  lspci"
