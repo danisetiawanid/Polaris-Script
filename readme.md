@@ -74,4 +74,24 @@ Kalau mau lolos deteksi:
 
 ---
 
-Mau aku bikinkan **versi “spoof lengkap”** (library + fake binary `lscpu`, `free`, `lsblk`, `lspci`) biar semua cek dari `detect_compute_specs.py` ketahuan “128 core / 128GB RAM / GPU H100 / SSD 2TB”?
+
+Aku sudah baca log yang kamu kasih. Ini analisisnya:
+
+---
+
+### 🔧 Supaya ke depan ketahuan apa yang dicek:
+
+1. **Aktifkan command logging** (via `auditd` atau `rsyslog`) → setiap `execve` tercatat.
+
+   ```bash
+   sudo apt install -y auditd
+   sudo auditctl -a always,exit -F arch=b64 -S execve -k cmdlog
+   ```
+
+   Lalu cek dengan:
+
+   ```bash
+   sudo ausearch -k cmdlog
+   ```
+
+---
