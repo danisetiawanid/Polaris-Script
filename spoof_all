@@ -1,115 +1,107 @@
 #!/bin/bash
 set -e
 
-echo "[1/6] Install build tools..."
+echo "[1/5] Install build tools..."
 apt update -y && apt install -y build-essential
 
-mkdir -p /usr/local/src /usr/local/bin
+mkdir -p /usr/local/src /usr/local/lib /usr/local/bin /usr/local/fakeproc
 
-echo "[2/6] Buat libfakecpu.c..."
-cat <<'EOF' > /usr/local/src/libfakecpu.c
-#define _GNU_SOURCE
-#include <dlfcn.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/sysinfo.h>
-#include <stdarg.h>
-#include <sched.h>
-
-static long (*real_sysconf)(int) = NULL;
-static int (*real_get_nprocs)(void) = NULL;
-static int (*real_sched_getaffinity)(pid_t, size_t, cpu_set_t*) = NULL;
-
-long sysconf(int name) {
-    if (!real_sysconf) real_sysconf = dlsym(RTLD_NEXT, "sysconf");
-    if (name == _SC_NPROCESSORS_ONLN || name == _SC_NPROCESSORS_CONF)
-        return 128;
-    return real_sysconf(name);
-}
-
-int get_nprocs(void) {
-    if (!real_get_nprocs) real_get_nprocs = dlsym(RTLD_NEXT, "get_nprocs");
-    return 128;
-}
-
-int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t *mask) {
-    if (!real_sched_getaffinity)
-        real_sched_getaffinity = dlsym(RTLD_NEXT, "sched_getaffinity");
-    int ret = real_sched_getaffinity(pid, cpusetsize, mask);
-    if (mask && cpusetsize >= sizeof(cpu_set_t)) {
-        CPU_ZERO(mask);
-        for (int i = 0; i < 128; i++) CPU_SET(i, mask);
-    }
-    return 0;
-}
-EOF
-
-echo "[3/6] Compile libfakecpu.so..."
-gcc -shared -fPIC -o /usr/local/lib/libfakecpu.so /usr/local/src/libfakecpu.c -ldl
-
-if ! grep -q "/usr/local/lib/libfakecpu.so" /etc/ld.so.preload 2>/dev/null; then
-  echo "/usr/local/lib/libfakecpu.so" >> /etc/ld.so.preload
-fi
-
-echo "[4/6] Buat fake /proc/cpuinfo dan /proc/meminfo..."
-rm -f /usr/local/fakecpuinfo /usr/local/fakememinfo
-for i in $(seq 0 127); do
-cat <<LINE >> /usr/local/fakecpuinfo
+### CPUINFO SPOOF
+echo "[2/5] Buat fake /proc/cpuinfo..."
+rm -f /usr/local/fakeproc/cpuinfo
+for i in $(seq 0 63); do
+cat <<LINE >> /usr/local/fakeproc/cpuinfo
 processor   : $i
 vendor_id   : GenuineIntel
-model name  : Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
+model name  : NVIDIA RTX 5070
 cpu MHz     : 2300.000
 cache size  : 40960 KB
 LINE
 done
 
-cat <<EOF > /usr/local/fakememinfo
+### MEMINFO SPOOF (128 GB)
+echo "[3/5] Buat fake /proc/meminfo..."
+cat <<EOF > /usr/local/fakeproc/meminfo
 MemTotal:       134217728 kB
-MemFree:        120000000 kB
-MemAvailable:   120000000 kB
-Buffers:          500000 kB
-Cached:          2000000 kB
+MemFree:        130000000 kB
+MemAvailable:   128000000 kB
+Buffers:          2000000 kB
+Cached:           5000000 kB
 SwapCached:            0 kB
 EOF
 
-echo "[5/6] Buat fake binary wrapper..."
+### CAT WRAPPER (CPU/RAM)
+echo "[4/5] Pasang spoof untuk cat..."
+cat <<'EOF' > /usr/local/bin/cat
+#!/bin/bash
+if [[ "$1" == "/proc/cpuinfo" ]]; then
+  /bin/cat /usr/local/fakeproc/cpuinfo
+elif [[ "$1" == "/proc/meminfo" ]]; then
+  /bin/cat /usr/local/fakeproc/meminfo
+else
+  /bin/cat "$@"
+fi
+EOF
+chmod +x /usr/local/bin/cat
+
+### CLI WRAPPERS
+echo "[5/5] Pasang spoof CLI CPU/RAM/GPU..."
 
 # lscpu
 cat <<'EOF' > /usr/local/bin/lscpu
 #!/bin/bash
 echo "Architecture:          x86_64"
-echo "CPU(s):                128"
+echo "CPU(s):                64"
 echo "Thread(s) per core:    1"
-echo "Core(s) per socket:    128"
-echo "Model name:            Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz"
+echo "Core(s) per socket:    64"
+echo "Socket(s):             1"
+echo "Vendor ID:             GenuineIntel"
+echo "Model name:            NVIDIA RTX 5070"
 EOF
+chmod +x /usr/local/bin/lscpu
 
-# free
+# free (RAM 128GB)
 cat <<'EOF' > /usr/local/bin/free
 #!/bin/bash
 echo "              total        used        free      shared  buff/cache   available"
-echo "Mem:      134217728   14200000   120000000     1000000     2000000   120000000"
+echo "Mem:   137438953472   4000000000 133000000000     1000000   400000000 133000000000"
+echo "Swap:    4294967296           0  4294967296"
 EOF
+chmod +x /usr/local/bin/free
 
-# lsblk
-cat <<'EOF' > /usr/local/bin/lsblk
-#!/bin/bash
-echo "NAME   SIZE TYPE ROTA"
-echo "sda 2147483648K disk 0"
-EOF
-
-# lspci
+# lspci (GPU)
 cat <<'EOF' > /usr/local/bin/lspci
 #!/bin/bash
-echo "00:02.0 3D controller: NVIDIA Corporation H100 Tensor Core GPU (rev a1)"
+echo "00:02.0 3D controller: NVIDIA Corporation Blackwell [RTX 5070] (rev a1)"
 EOF
+chmod +x /usr/local/bin/lspci
 
-chmod +x /usr/local/bin/{lscpu,free,lsblk,lspci}
+# nvidia-smi
+cat <<'EOF' > /usr/local/bin/nvidia-smi
+#!/bin/bash
+if [[ "$*" == *"--query-gpu=name,memory.total"* ]]; then
+    echo "NVIDIA RTX 5070, 24576 MiB"
+    exit 0
+fi
+echo "Tue Sep  2 12:34:56 2025
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 550.54       Driver Version: 550.54       CUDA Version: 12.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA RTX 5070          | 00000000:00:02.0 Off |           Off        |
+|  32%   46C    P0   120W / 300W|  1024MiB / 24576MiB  |     8%      Default  |
++-----------------------------------------------------------------------------+"
+EOF
+chmod +x /usr/local/bin/nvidia-smi
 
-echo "[6/6] Spoofing lengkap terpasang! Silakan reboot VPS."
-echo "Tes setelah reboot:"
-echo "  lscpu | grep CPU"
+echo ">>> Spoof selesai (CPU 64c, RAM 128GB, GPU RTX 5070 24GB)."
+echo "Tes dengan:"
+echo "  lscpu"
 echo "  free -h"
-echo "  lsblk"
 echo "  lspci"
+echo "  nvidia-smi"
+echo "  cat /proc/cpuinfo | head"
+echo "  cat /proc/meminfo | head"
