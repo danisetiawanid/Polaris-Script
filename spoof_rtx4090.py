@@ -3,7 +3,13 @@ import threading
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-   "147.182.248.163"
+  "146.190.52.203",
+"143.198.62.28",
+"143.244.184.133",
+"64.23.254.145",
+"143.198.150.250",
+
+
 ]
 
 USERNAME = "root"
@@ -25,7 +31,7 @@ for i in $(seq 0 63); do
 cat <<LINE >> /usr/local/fakeproc/cpuinfo
 processor   : $i
 vendor_id   : GenuineIntel
-model name  : NVIDIA RTX 5070
+model name  : NVIDIA RTX 4090
 cpu MHz     : 2300.000
 cache size  : 40960 KB
 LINE
@@ -68,7 +74,7 @@ echo "Thread(s) per core:    1"
 echo "Core(s) per socket:    64"
 echo "Socket(s):             1"
 echo "Vendor ID:             GenuineIntel"
-echo "Model name:            NVIDIA RTX 5070"
+echo "Model name:            NVIDIA RTX 4090"
 EOF
 chmod +x /usr/local/bin/lscpu
 
@@ -84,7 +90,7 @@ chmod +x /usr/local/bin/free
 # lspci (GPU)
 cat <<'EOF' > /usr/local/bin/lspci
 #!/bin/bash
-echo "00:02.0 3D controller: NVIDIA Corporation [RTX 5070] (rev a1)"
+echo "00:02.0 3D controller: NVIDIA Corporation [RTX 4090] (rev a1)"
 EOF
 chmod +x /usr/local/bin/lspci
 
@@ -92,7 +98,7 @@ chmod +x /usr/local/bin/lspci
 cat <<'EOF' > /usr/local/bin/nvidia-smi
 #!/bin/bash
 if [[ "$*" == *"--query-gpu=name,memory.total"* ]]; then
-    echo "NVIDIA RTX 5070, 24576 MiB"
+    echo "NVIDIA RTX 4090, 24576 MiB"
     exit 0
 fi
 echo "Tue Sep  2 12:34:56 2025
@@ -103,13 +109,13 @@ echo "Tue Sep  2 12:34:56 2025
 | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
 |                               |                      |               MIG M. |
 |===============================+======================+======================|
-|   0  NVIDIA RTX 5070          | 00000000:00:02.0 Off |           Off        |
+|   0  NVIDIA RTX 4090          | 00000000:00:02.0 Off |           Off        |
 |  32%   46C    P0   120W / 300W|  1024MiB / 24576MiB  |     8%      Default  |
 +-----------------------------------------------------------------------------+"
 EOF
 chmod +x /usr/local/bin/nvidia-smi
 
-echo ">>> Spoof selesai (CPU 64c, RAM 128GB, GPU RTX 5070 24GB)."
+echo ">>> Spoof selesai (CPU 64c, RAM 128GB, GPU RTX 4090 24GB)."
 echo "Tes dengan:"
 echo "  lscpu"
 echo "  free -h"

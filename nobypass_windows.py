@@ -10,12 +10,11 @@ USERNAME = "root"
 PASSWORD = """Azura042AA"""
 
 ip_list_baru = [
-    "129.212.179.11",
-    "134.199.201.255",
-    "129.212.178.42",
-    "129.212.176.218",
-    "134.199.204.250",
-    "129.212.178.43"
+"146.190.52.203",
+"143.198.62.28",
+"143.244.184.133",
+"64.23.254.145",
+"143.198.150.250",
 ]
 
 
@@ -32,10 +31,10 @@ def focus_window(title):
 def fill_form(ip, username, password, nama_mesin):
     time.sleep(0.4)
 
-    button_image = 'add_button.JPG'  # Nama file screenshot tombol
+    button_image = 'add.PNG'  # Nama file screenshot tombol
 
     # Cari tombol berdasarkan gambar
-    location = pyautogui.locateOnScreen(button_image, confidence=0.6)
+    location = pyautogui.locateOnScreen(button_image, confidence=0.9)
 
     if location:
         center = pyautogui.center(location)
