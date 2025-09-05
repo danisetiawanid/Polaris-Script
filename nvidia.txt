@@ -1,0 +1,5 @@
+apt install -y nvidia-utils-550
+nano libnvidia-ml.c
+gcc -shared -fPIC -o /usr/local/lib/libnvidia-ml.so.550.120 libnvidia-ml.c
+ln -sf /usr/local/lib/libnvidia-ml.so.550.120 /lib/x86_64-linux-gnu/libnvidia-ml.so.1
+nvidia-smi
