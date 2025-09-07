@@ -3,11 +3,16 @@ import threading
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
- "138.68.43.4",
-"143.110.140.14",
-"178.128.15.129",
-"178.128.8.246",
-
+"159.89.157.31",
+"104.248.208.197",
+"167.99.97.200",
+"165.22.141.210",
+"159.65.100.207",
+"134.209.48.171",
+"134.209.10.126",
+"104.248.215.146",
+"138.68.47.100",
+"138.68.42.168",
 ]
 
 USERNAME = "root"
@@ -28,10 +33,10 @@ rm -f /usr/local/fakeproc/cpuinfo
 for i in $(seq 0 15); do
 cat <<LINE >> /usr/local/fakeproc/cpuinfo
 processor   : $i
-vendor_id   : NVIDIA
-model name  : NVIDIA RTX 4060
-cpu MHz     : 2300.000
-cache size  : 40960 KB
+vendor_id   : AuthenticAMD
+model name  : AMD Ryzen 9 5950X 16-Core Processor
+cpu MHz     : 3400.000
+cache size  : 8192 KB
 LINE
 done
 
@@ -68,8 +73,8 @@ echo "CPU(s):                16"
 echo "Thread(s) per core:    1"
 echo "Core(s) per socket:    16"
 echo "Socket(s):             1"
-echo "Vendor ID:             NVIDIA"
-echo "Model name:            NVIDIA RTX 4060"
+echo "Vendor ID:             AuthenticAMD"
+echo "Model name:            AMD Ryzen 9 5950X 16-Core Processor"
 EOF
 chmod +x /usr/local/bin/lscpu
 
