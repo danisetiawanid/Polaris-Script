@@ -5,7 +5,6 @@ import pyperclip
 import pytesseract
 import cv2
 import numpy as np
-import pygetwindow as gw  # pip install pygetwindow
 
 # Judul jendela aplikasi
 WINDOW_TITLE = "Polaris Node Manager"
@@ -40,10 +39,25 @@ def focus_window(title):
     except subprocess.CalledProcessError:
         raise Exception(f"Tidak ditemukan window dengan judul mengandung '{title}'")
 
+def get_window_geometry(title):
+    """Ambil posisi dan ukuran window pakai xdotool"""
+    win_id = subprocess.check_output(
+        ["xdotool", "search", "--name", title]
+    ).decode().strip().split("\n")[0]
+
+    geo = subprocess.check_output(
+        ["xdotool", "getwindowgeometry", "--shell", win_id]
+    ).decode()
+
+    geo_dict = dict(line.split("=") for line in geo.splitlines() if "=" in line)
+    x, y = int(geo_dict["X"]), int(geo_dict["Y"])
+    w, h = int(geo_dict["WIDTH"]), int(geo_dict["HEIGHT"])
+    return (x, y, w, h)
+
 def click_button_add_machine():
     """Klik tombol Add Machine dengan OCR (toleran 'aad'/'add' + 'mach')"""
-    win = gw.getWindowsWithTitle(WINDOW_TITLE)[0]
-    region = (win.left, win.top, win.width, win.height)  # seluruh window
+    x, y, w, h = get_window_geometry(WINDOW_TITLE)
+    region = (x, y, w, h)  # seluruh window
 
     for attempt in range(5):
         screenshot = pyautogui.screenshot(region=region)
@@ -61,8 +75,8 @@ def click_button_add_machine():
         if any(w in ["add", "aad"] for w in words) and any("mach" in w for w in words):
             for i, t in enumerate(data["text"]):
                 if t.lower() in ["add", "aad"]:
-                    x, y, w, h = data["left"][i], data["top"][i], data["width"][i], data["height"][i]
-                    center_x, center_y = x + w // 2 + region[0], y + h // 2 + region[1]
+                    bx, by, bw, bh = data["left"][i], data["top"][i], data["width"][i], data["height"][i]
+                    center_x, center_y = bx + bw // 2 + x, by + bh // 2 + y
                     pyautogui.click(center_x, center_y)
                     print(f"✅ Klik tombol 'Add Machine' di ({center_x},{center_y})")
                     return True
