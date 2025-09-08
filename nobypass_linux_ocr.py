@@ -5,6 +5,7 @@ import pyperclip
 import pytesseract
 import cv2
 import numpy as np
+import pygetwindow as gw  # pip install pygetwindow
 
 # Judul jendela aplikasi
 WINDOW_TITLE = "Polaris Node Manager"
@@ -25,14 +26,13 @@ ip_list_baru = [
 ]
 
 def focus_window(title):
-    """Fokus ke window dengan judul tertentu (Linux, via xdotool)"""
+    """Fokus ke window dengan judul tertentu (Linux via xdotool)"""
     try:
         result = subprocess.check_output(["xdotool", "search", "--name", title])
         window_ids = result.decode().strip().split("\n")
         if not window_ids:
             raise Exception("Window tidak ditemukan")
 
-        # Fokus ke window pertama yang cocok
         subprocess.run(["xdotool", "windowactivate", "--sync", window_ids[0]])
         time.sleep(1)
         print(f"✅ Fokus ke jendela: {title}")
@@ -41,29 +41,28 @@ def focus_window(title):
         raise Exception(f"Tidak ditemukan window dengan judul mengandung '{title}'")
 
 def click_button_add_machine():
-    """Cari tombol 'Add Machine' via OCR (tanpa gambar)"""
-    for attempt in range(5):  # retry max 5x
-        screenshot = pyautogui.screenshot()
+    """Klik tombol Add Machine dengan OCR (toleran 'aad'/'add' + 'mach')"""
+    win = gw.getWindowsWithTitle(WINDOW_TITLE)[0]
+    region = (win.left, win.top, win.width, win.height)  # seluruh window
+
+    for attempt in range(5):
+        screenshot = pyautogui.screenshot(region=region)
         img = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
 
         data = pytesseract.image_to_data(
-            img, output_type=pytesseract.Output.DICT, config="--psm 6"
+            img,
+            output_type=pytesseract.Output.DICT,
+            config="--psm 6 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+"
         )
 
         words = [t.lower() for t in data["text"] if t.strip()]
         print(f"[DEBUG OCR percobaan {attempt+1}]:", words)
 
-        for i, t in enumerate(data["text"]):
-            if "add" in t.lower():
-                # cek apakah ada 'mach' juga di OCR
-                if any("mach" in w for w in words):
-                    x, y, w, h = (
-                        data["left"][i],
-                        data["top"][i],
-                        data["width"][i],
-                        data["height"][i],
-                    )
-                    center_x, center_y = x + w // 2, y + h // 2
+        if any(w in ["add", "aad"] for w in words) and any("mach" in w for w in words):
+            for i, t in enumerate(data["text"]):
+                if t.lower() in ["add", "aad"]:
+                    x, y, w, h = data["left"][i], data["top"][i], data["width"][i], data["height"][i]
+                    center_x, center_y = x + w // 2 + region[0], y + h // 2 + region[1]
                     pyautogui.click(center_x, center_y)
                     print(f"✅ Klik tombol 'Add Machine' di ({center_x},{center_y})")
                     return True
