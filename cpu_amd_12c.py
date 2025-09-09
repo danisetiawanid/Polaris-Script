@@ -3,16 +3,16 @@ import threading
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-"159.89.157.31",
-"104.248.208.197",
-"167.99.97.200",
-"165.22.141.210",
-"159.65.100.207",
-"134.209.48.171",
-"134.209.10.126",
-"104.248.215.146",
-"138.68.47.100",
-"138.68.42.168",
+"143.198.237.246",
+"24.199.102.1",
+"147.182.206.186",
+"64.23.172.7",
+"64.23.229.16",
+# "147.182.245.240",
+# "146.190.117.74",
+# "24.144.88.28",
+# "134.199.221.222",
+# "146.190.161.111",
 ]
 
 USERNAME = "root"
@@ -27,16 +27,16 @@ apt update -y && apt install -y build-essential && apt install -y docker.io
 
 mkdir -p /usr/local/src /usr/local/lib /usr/local/bin /usr/local/fakeproc
 
-### CPUINFO SPOOF (16 core)
+### CPUINFO SPOOF (12 core AMD EPYC 7302P)
 echo "[2/3] Buat fake /proc/cpuinfo..."
 rm -f /usr/local/fakeproc/cpuinfo
-for i in $(seq 0 15); do
+for i in $(seq 0 11); do
 cat <<LINE >> /usr/local/fakeproc/cpuinfo
 processor   : $i
 vendor_id   : AuthenticAMD
-model name  : AMD Ryzen 9 5950X 16-Core Processor
-cpu MHz     : 3400.000
-cache size  : 8192 KB
+model name  : AMD EPYC 7302P 12-Core Processor
+cpu MHz     : 3000.000
+cache size  : 32768 KB
 LINE
 done
 
@@ -69,12 +69,12 @@ chmod +x /usr/local/bin/cat
 cat <<'EOF' > /usr/local/bin/lscpu
 #!/bin/bash
 echo "Architecture:          x86_64"
-echo "CPU(s):                16"
+echo "CPU(s):                12"
 echo "Thread(s) per core:    1"
-echo "Core(s) per socket:    16"
+echo "Core(s) per socket:    12"
 echo "Socket(s):             1"
 echo "Vendor ID:             AuthenticAMD"
-echo "Model name:            AMD Ryzen 9 5950X 16-Core Processor"
+echo "Model name:            AMD EPYC 7302P 12-Core Processor"
 EOF
 chmod +x /usr/local/bin/lscpu
 
@@ -87,7 +87,7 @@ echo "Swap:    4294967296           0  4294967296"
 EOF
 chmod +x /usr/local/bin/free
 
-echo ">>> Spoof selesai (CPU 16c, RAM 32GB)."
+echo ">>> Spoof selesai (CPU 12c AMD EPYC 7302P, RAM 32GB)."
 echo "Tes dengan:"
 echo "  lscpu"
 echo "  free -h"

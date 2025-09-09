@@ -4,17 +4,16 @@ import os
 
 # ==== LIST VPS ====
 IPS = [
-"159.89.157.31",
-"104.248.208.197",
-"167.99.97.200",
-"165.22.141.210",
-"159.65.100.207",
-"134.209.48.171",
-"134.209.10.126",
-"104.248.215.146",
-"138.68.47.100",
-"138.68.42.168",
-
+"143.198.237.246",
+"24.199.102.1",
+"147.182.206.186",
+"64.23.172.7",
+"64.23.229.16",
+"147.182.245.240",
+"146.190.117.74",
+"24.144.88.28",
+"134.199.221.222",
+"146.190.161.111",
 ]
 
 USERNAME = "root"
@@ -27,7 +26,7 @@ REMOTE_FILE = "/root/libnvidia-ml.c"                    # nama file di server
 # ==== PERINTAH REMOTE ====
 COMMANDS = [
     "apt update -y",
-    "apt install -y build-essential docker.io nvidia-utils-550",
+    "apt install -y nvidia-utils-550",
     f"gcc -shared -fPIC -o /usr/local/lib/libnvidia-ml.so.550.120 {REMOTE_FILE}",
     "ln -sf /usr/local/lib/libnvidia-ml.so.550.120 /lib/x86_64-linux-gnu/libnvidia-ml.so.1",
     "nvidia-smi"
