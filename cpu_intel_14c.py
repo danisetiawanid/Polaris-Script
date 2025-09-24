@@ -3,15 +3,8 @@ import threading
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-# "129.212.190.17",
-# "129.212.176.211",
-"134.199.201.163",
-"134.199.194.52",
-"134.199.206.254",
-"129.212.177.90",
-"129.212.180.149",
-"134.199.193.190",
-"134.199.202.73",
+"146.190.175.35",
+"134.199.227.178"
 ]
 
 USERNAME = "root"
@@ -85,6 +78,14 @@ echo "Mem:    34359738368   2000000000 32000000000     500000   200000000 320000
 echo "Swap:    4294967296           0  4294967296"
 EOF
 chmod +x /usr/local/bin/free
+
+# lsblk
+cat <<'EOF' > /usr/local/bin/lsblk
+#!/bin/bash
+echo "NAME   SIZE TYPE ROTA"
+echo "sda 882147483648K disk 0"
+EOF
+chmod +x /usr/local/bin/lsblk
 
 echo ">>> Spoof selesai (CPU 14c Intel i5-14600K, RAM 32GB)."
 echo "Tes dengan:"
