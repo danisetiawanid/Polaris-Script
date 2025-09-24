@@ -86,6 +86,16 @@ echo "Swap:    4294967296           0  4294967296"
 EOF
 chmod +x /usr/local/bin/free
 
+
+# lsblk
+cat <<'EOF' > /usr/local/bin/lsblk
+#!/bin/bash
+echo "NAME   SIZE TYPE ROTA"
+echo "sda 682147483648K disk 0"
+EOF
+chmod +x /usr/local/bin/lsblk
+
+
 echo ">>> Spoof selesai (CPU 16c, RAM 32GB)."
 echo "Tes dengan:"
 echo "  lscpu"
