@@ -3,8 +3,7 @@ import threading
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-"146.190.175.35",
-"134.199.227.178"
+"146.190.175.35"
 ]
 
 USERNAME = "root"
