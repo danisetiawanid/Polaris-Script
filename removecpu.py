@@ -4,15 +4,8 @@ import sys
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-# "129.212.190.17",
-# "129.212.176.211",
-"134.199.201.163",
-"134.199.194.52",
-"134.199.206.254",
-"129.212.177.90",
-"129.212.180.149",
-"134.199.193.190",
-"134.199.202.73",
+"104.131.190.76",
+"162.243.185.14"
 ]
 
 USERNAME = "root"
@@ -30,6 +23,7 @@ echo "[2/3] Hapus wrapper palsu..."
 rm -f /usr/local/bin/cat
 rm -f /usr/local/bin/lscpu
 rm -f /usr/local/bin/free
+rm -f /usr/local/bin/lsblk
 
 echo "[3/3] Pastikan pakai binary asli..."
 hash -r   # reset hash shell agar ambil /bin/cat, /usr/bin/lscpu, /usr/bin/free

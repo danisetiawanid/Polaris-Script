@@ -12,7 +12,7 @@ USERNAME = "root"
 PASSWORD = "Azura042AA"
 
 # ==== FILE LOKAL ====
-LOCAL_FILE = os.path.join(os.getcwd(), "spoof_h100.c")  # file hasil upload
+LOCAL_FILE = os.path.join(os.getcwd(), "spoof_a5000.c")  # file hasil upload
 REMOTE_FILE = "/root/libnvidia-ml.c"                    # nama file di server
 
 # ==== PERINTAH REMOTE ====
