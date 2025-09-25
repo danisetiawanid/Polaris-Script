@@ -1,15 +1,70 @@
 import paramiko
 import threading
+import io
+import os
+import sys
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-"104.131.190.76",
-"162.243.185.14"
+#     "44.203.56.181",
+# "34.207.123.4",
+# "18.205.116.18",
+
+
+"3.83.105.89",
+"52.201.227.131",
+
+
+# "34.239.105.243",
+# "35.173.125.250",
 ]
 
 USERNAME = "root"
-PASSWORD = "Azura042AA"   # ganti sesuai VPS
 
+# ==== PILIH METODE AUTENTIKASI ====
+# Jika True -> gunakan PRIVATE_KEY; jika False -> gunakan PASSWORD
+USE_SSH_KEY = True
+
+# Jika menggunakan password, tulis di sini:
+PASSWORD = "Azura042AA"  # ganti sesuai VPS (jika USE_SSH_KEY=False)
+
+# -----------------------------
+# Paste private key di bawah ini (termasuk -----BEGIN ...----- sampai -----END ...-----)
+# Jika tidak pakai key, biarkan string kosong atau tetap tapi set USE_SSH_KEY=False
+# -----------------------------
+PRIVATE_KEY = r"""-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA2DJRmWW9NenwFv3BwRNE7uKUXOjbByuC2hVNWAeqo535YU6p
++e81xwsolMrS//l0CT7N/RjogOp7UfQdt9tyo8TPp5LBScvEt8OMj2/3VZsE4aS7
+fB6o16DCmP6nbtSEqx6azvXUCQuNldDXILyMvYC8QZyt0xCRlSEIQTZFFZ2jiJBd
+Ddr2vf+Rcef3Hgqyv6FL7Q6go7avXhE9VJNKuIXg4LpfOOAb1WFO1m2eklIXhL5f
+G1WQkads7qHziBpkUAkXc5idkyn0PYDeCuhUjYpPVfbUxnRqpPtmrW1qxbhLL6bp
+dv2TVO/wd/F/OmkKMOD5CazxVfoPFbM/Qg66EwIDAQABAoIBAGwusbpKuKVzzFoU
+3JFarRHEe20KcB9kXHP4WN2F6JM7B4DztgaE9qoFIWdjHrZMAw5lSPovLpjjvJXD
+y+MmgnUElMxLmUDuIB+8UGeuJVvG2Gh44AA5708G+JlKREonOcPO6rRJOrLT/yNK
+f3u4Hczt0EYcurZ1AgRXpSPMnkEz1mcA2zSP2i5WqG4yITIBlXPjNam65O/LowPa
+PGYVVu+7tvkjhF+DI+ffjw3aMsPQgsOnKcsgR0s4tp5BtVxzvBrVG/exJCAwTUED
+HkgttnrposyILE3CX/hRooVT92DK7nNxZKHORlJJe8rjNqTl6qImzss+HQ0gBFYx
+oeYMnIECgYEA/n365y0q01WufBwmoRkGQQwzlWauFSg8mRvfyrBTxhpBFFOsOKZ4
+OpC++arXnkL4Ql28ZBq0CDXdUG7BxhU+ps1QL1iZM5MF0VGSGaodgzoJ2NYLzQc3
+zeCYRHXFQFB50nhfFuhQdNvRmhUiUP2/WeqzDiaN0IkU/4uZxl1YDKECgYEA2XpA
+QsQ7zY1f4Mq4dQpxyJLXAgko3XVyKj8nkCWdw29dBjeihWkVPzeGEQ6ZYmNnNUcn
+mHgRINnQf4XSUQdPZOeV/ZkHmLP+v6F5Ja5vDqXLg9Tf1FnP22ZHCj6Zx/e7WN0A
+eOZ9d+XUpTIPEjIitKEojhXfATzUMAsTVfRydjMCgYAgholismsex3ydcBufy0r5
+VU3iclUdbx8Pknhvt0l9sC1RI8CHHP+QvJ8r2aHlIDoKgWBqit8njXrTpNQvNNfl
+CaiN5IzwAoJj1kEN9qf+9ZP8mp63fYysS2Aqn8KuDZsEQ04j510hElcfkkPohgXG
+wDBSRqspU9vTLUxiBdwTAQKBgQCkjJZgrj+diLGZ0Wj9zbhIDaq3NJ0B62JFSuGx
+dHTJMdLN6HyEuvzDh0xeTZCK3DF0I3F3MKmtFIFoa6W1f3V4IK3hYs9XoCFJd3DF
+rRUEnTe+eOwerRHTrLBltPYAUpYjZ5x63dLjTDe4Aodauip+R037K9s/AXp/G3I2
+4C1W9wKBgQCoIH74y0A3DBjke1vEgx7mjI6r6taaSrK75Cf2cR8+D8cnAIU1nopQ
+gREiSJO/RR9X7kwhVoX/cTniKXhZDMoGIQkv6sGSkDn4k8KU4VM3/y/k0AugEdiv
+xr86KVcyPahmKXklFtQr6U0xSAg+zJhDAgerUywHDiSDsc1OBFObow==
+-----END RSA PRIVATE KEY-----"""
+
+# Jika private key punya passphrase, tulis di sini. Jika tidak, biarkan None
+PRIVATE_KEY_PASSPHRASE = None
+# -----------------------------
+
+# Skrip remote (tetap sama seperti yang kamu kirim)
 SCRIPT = r"""#!/bin/bash
 set -e
 
@@ -87,7 +142,7 @@ echo "sda 882147483648K disk 0"
 EOF
 chmod +x /usr/local/bin/lsblk
 
-echo ">>> Selesai (AMD EPYC 7642, 48 Core @2.3GHz, RAM 48GB)."
+echo ">>> Selesai (Intel Xeon Platinum 8268, 24 Core @2.9GHz, RAM 64GB)."
 echo "Tes dengan:"
 echo "  lscpu"
 echo "  free -h"
@@ -95,16 +150,68 @@ echo "  cat /proc/cpuinfo | head"
 echo "  cat /proc/meminfo | head"
 """
 
+# --- helper: load private key from string, try RSA then Ed25519 then ECDSA ---
+def load_pkey_from_string(pem_str, passphrase=None):
+    if not pem_str or not pem_str.strip():
+        raise RuntimeError("PRIVATE_KEY kosong.")
+    stream = io.StringIO(pem_str)
+    last_exc = None
+    try:
+        return paramiko.RSAKey.from_private_key(stream, password=passphrase)
+    except Exception as e:
+        last_exc = e
+    stream = io.StringIO(pem_str)
+    try:
+        return paramiko.Ed25519Key.from_private_key(stream, password=passphrase)
+    except Exception as e:
+        last_exc = e
+    stream = io.StringIO(pem_str)
+    try:
+        return paramiko.ECDSAKey.from_private_key(stream, password=passphrase)
+    except Exception as e:
+        last_exc = e
+    raise RuntimeError(f"Gagal load private key: {last_exc}")
+
+# Prepare PKEY jika diminta
+PKEY = None
+if USE_SSH_KEY:
+    try:
+        PKEY = load_pkey_from_string(PRIVATE_KEY, PRIVATE_KEY_PASSPHRASE)
+        print("[*] Private key berhasil di-load.")
+    except Exception as e:
+        print(f"[ERROR] Gagal load PRIVATE_KEY: {e}")
+        raise
+
+# jika pakai password, pastikan terisi
+if not USE_SSH_KEY:
+    if not PASSWORD:
+        raise RuntimeError("USE_SSH_KEY=False tapi PASSWORD kosong. Isi PASSWORD atau ubah USE_SSH_KEY=True.")
+
 def run_cuy(ip):
     try:
         print(f"[+] Connect ke {ip} ...")
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(ip, username=USERNAME, password=PASSWORD, timeout=15)
 
+        connect_kwargs = dict(
+            hostname=ip,
+            username=USERNAME,
+            timeout=20,
+            allow_agent=False,
+            look_for_keys=False
+        )
+
+        if USE_SSH_KEY and PKEY is not None:
+            connect_kwargs['pkey'] = PKEY
+        else:
+            connect_kwargs['password'] = PASSWORD
+
+        ssh.connect(**connect_kwargs)
+
+        # run skrip remote
         stdin, stdout, stderr = ssh.exec_command(SCRIPT)
-        out = stdout.read().decode()
-        err = stderr.read().decode()
+        out = stdout.read().decode(errors='ignore')
+        err = stderr.read().decode(errors='ignore')
         print(f"[{ip}] OUTPUT:\n{out}")
         if err:
             print(f"[{ip}] ERROR:\n{err}")

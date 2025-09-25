@@ -6,8 +6,17 @@ import sys
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-    "165.227.112.169",
-    "138.197.114.69"
+#     "44.203.56.181",
+# "34.207.123.4",
+# "18.205.116.18",
+
+
+# "3.83.105.89",
+# "52.201.227.131",
+
+
+"34.239.105.243",
+"35.173.125.250",
 ]
 
 USERNAME = "root"
@@ -64,26 +73,27 @@ apt update -y && apt install -y build-essential && apt install -y docker.io
 
 mkdir -p /usr/local/src /usr/local/lib /usr/local/bin /usr/local/fakeproc
 
+### CPUINFO SPOOF (64 core AMD EPYC 9555)
 echo "[2/3] Buat fake /proc/cpuinfo..."
 rm -f /usr/local/fakeproc/cpuinfo
-for i in $(seq 0 23); do
+for i in $(seq 0 63); do
 cat <<LINE >> /usr/local/fakeproc/cpuinfo
 processor   : $i
-vendor_id   : GenuineIntel
-model name  : Intel Xeon Platinum 8268
-cpu MHz     : 2900.000
-cache size  : 24576 KB
+vendor_id   : AuthenticAMD
+model name  : AMD EPYC 9555 64-Core Processor
+cpu MHz     : 2600.000
+cache size  : 51200 KB
 LINE
 done
 
-### MEMINFO (64 GB)
+### MEMINFO SPOOF (32 GB)
 echo "[3/3] Buat fake /proc/meminfo..."
 cat <<EOF > /usr/local/fakeproc/meminfo
-MemTotal:       67108864 kB
-MemFree:        65000000 kB
-MemAvailable:   65000000 kB
-Buffers:         2000000 kB
-Cached:          3000000 kB
+MemTotal:       33554432 kB
+MemFree:        32000000 kB
+MemAvailable:   32000000 kB
+Buffers:         1000000 kB
+Cached:          2000000 kB
 SwapCached:            0 kB
 EOF
 
@@ -105,22 +115,20 @@ chmod +x /usr/local/bin/cat
 cat <<'EOF' > /usr/local/bin/lscpu
 #!/bin/bash
 echo "Architecture:          x86_64"
-echo "CPU(s):                24"
+echo "CPU(s):                64"
 echo "Thread(s) per core:    1"
-echo "Core(s) per socket:    24"
+echo "Core(s) per socket:    64"
 echo "Socket(s):             1"
-echo "Vendor ID:             GenuineIntel"
-echo "Model name:            Intel Xeon Platinum 8268"
-echo "CPU MHz:               2900.000"
-echo "CPU max MHz:           3900.000"
+echo "Vendor ID:             AuthenticAMD"
+echo "Model name:            AMD EPYC 9555 64-Core Processor"
 EOF
 chmod +x /usr/local/bin/lscpu
 
-# free (RAM 64GB)
+# free (RAM 32GB)
 cat <<'EOF' > /usr/local/bin/free
 #!/bin/bash
 echo "              total        used        free      shared  buff/cache   available"
-echo "Mem:    68719476736   2000000000 66000000000     500000   300000000 66000000000"
+echo "Mem:    34359738368   2000000000 32000000000     500000   200000000 32000000000"
 echo "Swap:    4294967296           0  4294967296"
 EOF
 chmod +x /usr/local/bin/free
@@ -129,7 +137,7 @@ chmod +x /usr/local/bin/free
 cat <<'EOF' > /usr/local/bin/lsblk
 #!/bin/bash
 echo "NAME   SIZE TYPE ROTA"
-echo "sda 782147483648K disk 0"
+echo "sda 1082147483648K disk 0"
 EOF
 chmod +x /usr/local/bin/lsblk
 
