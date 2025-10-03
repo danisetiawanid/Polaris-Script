@@ -7,15 +7,15 @@ import os
 
 # ==== EDIT LIST IP DI SINI ====
 IPS = [
-    "54.173.224.57",
-    "54.82.139.183"
+   "134.199.203.144",
+"64.225.117.62",
 ]
 
 USERNAME = "root"
 PASSWORD = "Azura042AA"   # ganti sesuai password VPS kamu
 
 # Set True untuk pakai SSH key (paste ke PRIVATE_KEY), False untuk pakai password
-USE_SSH_KEY = True
+USE_SSH_KEY = False
 
 # Paste private key di bawah ini (termasuk -----BEGIN ...----- sampai -----END ...-----)
 # Jika tidak ingin menggunakan key, biarkan string kosong ""
