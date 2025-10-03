@@ -17,8 +17,8 @@ import sys
 
 # ==== LIST VPS ====
 IPS = [
-"54.173.224.57",
-"54.82.139.183",
+"134.199.203.144",
+"64.225.117.62",
 ]
 
 USERNAME = "root"
@@ -26,8 +26,8 @@ USERNAME = "root"
 # -----------------------------
 # AUTH TOGGLE (pilih salah satu saja)
 # -----------------------------
-USE_INLINE_KEY = True   # True = gunakan PRIVATE_KEY (inline paste)
-USE_PASSWORD = False    # True = gunakan PASSWORD
+USE_INLINE_KEY = False   # True = gunakan PRIVATE_KEY (inline paste)
+USE_PASSWORD = True    # True = gunakan PASSWORD
 # -----------------------------
 
 # Jika pakai password, isi di sini:
@@ -64,7 +64,7 @@ xr86KVcyPahmKXklFtQr6U0xSAg+zJhDAgerUywHDiSDsc1OBFObow==
 PRIVATE_KEY_PASSPHRASE = None  # isi jika private key terenkripsi, atau None
 
 # ==== FILE LOKAL / REMOTE ====
-LOCAL_FILE = os.path.join(os.getcwd(), "spoof_a5000.c")  # file hasil upload (harus ada di cwd)
+LOCAL_FILE = os.path.join(os.getcwd(), "spoof_3090.c")  # file hasil upload (harus ada di cwd)
 REMOTE_FILE = "/root/libnvidia-ml.c"                    # nama file di server
 
 # ==== PERINTAH REMOTE ====
